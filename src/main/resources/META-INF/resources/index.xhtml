@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:faces="jakarta.faces"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:f="jakarta.faces.core"
+      xmlns:h="jakarta.faces.html"
+      xmlns:pt="jakarta.faces.passthrough"
+      xmlns:cc="jakarta.faces.composite"
+      xmlns:c="jakarta.tags.core"
+      xmlns:p="primefaces"
+      xmlns:fn="jakarta.tags.functions">
+<h:head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <title>CRUD USUARIO | SB-JSF</title>
+    <h:outputStylesheet library="webjars" name="primeflex/3.3.1/primeflex.min.css"/>
+    <h:outputStylesheet library="assets" name="css/layout.css"/>
+</h:head>
+<h:body>
+    <div class="layout-wrapper">
+        <div class="layout-content layout-content-inner">
+            <div class="m-4 crud-demo">
+
+                <div class="flex justify-content-center flex-wrap">
+                    <h1 class="flex align-items-center justify-content-center font-bold">
+                        CRUD SPRING BOOT JSF
+                    </h1>
+                </div>
+
+                <div class="grid">
+                    <div class="col-12">
+                        <h:form id="form">
+                            <p:growl id="messages" showDetail="true"/>
+
+                            <p:toolbar>
+                                <p:toolbarGroup>
+                                    <p:commandButton value="Nuevo" icon="pi pi-plus"
+                                                     actionListener="#{usuarioMB.nuevo()}"
+                                                     update=":dialogs:opDatos"
+                                                     oncomplete="PF('dlgUsuario').show()"
+                                                     styleClass="ui-button-success" style="margin-right: .5rem">
+                                        <p:resetInput target=":dialogs:opDatos"/>
+                                    </p:commandButton>
+                                </p:toolbarGroup>
+                            </p:toolbar>
+
+                            <p:dataTable id="dt-usuarios"
+                                         widgetVar="dtUsuarios"
+                                         var="usuario" value="#{usuarioMB.usuarios}"
+                                         reflow="true" styleClass="products-table"
+                                         paginator="true" rows="10" selectionRowMode="add"
+                                         paginatorPosition="bottom">
+
+                                <f:facet name="header">
+                                    <div class="products-table-header">
+                                        <span style="font-weight: bold">Usuarios</span>
+                                        <span class="filter-container ui-input-icon-left">
+                                            <i class="pi pi-search"/>
+                                            <p:inputText id="globalFilter" onkeyup="PF('dtUsuarios').filter()" placeholder="Search" />
+                                        </span>
+                                    </div>
+                                </f:facet>
+
+                                <p:column headerText="Nombre"
+                                          filterBy="#{usuario.usuario}">
+                                    <h:outputText value="#{usuario.usuario}" />
+                                </p:column>
+                                <p:column headerText="Clave"
+                                          filterBy="#{usuario.password}">
+                                    <h:outputText value="#{usuario.password}" />
+                                </p:column>
+                                <p:column ariaHeaderText="Acciones">
+                                    <p:commandButton icon="pi pi-pencil"
+                                                     update=":dialogs:opDatos"
+                                                     oncomplete="PF('dlgUsuario').show()"
+                                                     styleClass="edit-button rounded-button ui-button-success"
+                                                     process="@this">
+                                        <f:setPropertyActionListener value="#{usuario}" target="#{usuarioMB.usuario}" />
+                                        <p:resetInput target=":dialogs:opDatos" />
+                                    </p:commandButton>
+                                    <p:commandButton class="ui-button-warning rounded-button" icon="pi pi-trash"
+                                                     process="@this"
+                                                     oncomplete="PF('dlgEliminarUsuario').show()">
+                                        <f:setPropertyActionListener value="#{usuario}" target="#{usuarioMB.usuario}" />
+                                    </p:commandButton>
+                                </p:column>
+
+                            </p:dataTable>
+
+                        </h:form>
+
+                        <h:form id="dialogs">
+                            <p:dialog header="Usuario"
+                                      showEffect="fade"
+                                      modal="true"
+                                      widgetVar="dlgUsuario"
+                                      responsive="true">
+                                <p:outputPanel id="opDatos" class="ui-fluid">
+                                    <p:outputPanel rendered="#{not empty usuarioMB.usuario}">
+                                        <div class="field">
+                                            <p:outputLabel for="nombre">Nombre</p:outputLabel>
+                                            <p:inputText id="nombre" value="#{usuarioMB.usuario.usuario}"
+                                                         required="true"/>
+                                        </div>
+                                        <div class="field">
+                                            <p:outputLabel for="pwd">Clave</p:outputLabel>
+                                            <p:password id="pwd" value="#{usuarioMB.usuario.password}" required="true"/>
+                                        </div>
+                                    </p:outputPanel>
+                                </p:outputPanel>
+
+                                <f:facet name="footer">
+                                    <p:commandButton value="Guardar" icon="pi pi-check"
+                                                     actionListener="#{usuarioMB.guardar()}"
+                                                     update="opDatos"
+                                                     process="opDatos @this"/>
+                                    <p:commandButton value="Cancelar" icon="pi pi-times"
+                                                     onclick="PF('dlgUsuario').hide()"
+                                                     class="ui-button-secondary" type="button"/>
+                                </f:facet>
+                            </p:dialog>
+
+                            <p:confirmDialog widgetVar="dlgEliminarUsuario"
+                                             showEffect="fade" width="300"
+                                             message="Eliminar el usuario?" header="Confirm" severity="warn">
+                                <p:commandButton value="Si" icon="pi pi-check"
+                                                 actionListener="#{usuarioMB.eliminar()}"
+                                                 process="@this"
+                                                 oncomplete="PF('dlgEliminarUsuario').hide()"/>
+                                <p:commandButton value="No" type="button" styleClass="ui-button-secondary"
+                                                 icon="pi pi-times"
+                                                 onclick="PF('dlgEliminarUsuario').hide()"/>
+                            </p:confirmDialog>
+
+                        </h:form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</h:body>
+</html>
